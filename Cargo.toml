@@ -1,0 +1,9 @@
+[package]
+name = "lcd-2inch4"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+embedded-hal = { workspace = true }
+
