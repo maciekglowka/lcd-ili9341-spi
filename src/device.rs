@@ -200,6 +200,8 @@ where
         self.write_command(DISPLAY_ON)?;
         self.set_gamma()?;
 
+        self.set_backlight(255)?;
+
         Ok(())
     }
 
@@ -243,7 +245,33 @@ where
         Ok(())
     }
 
-    pub fn set_window(&mut self, x0: u16, y0: u16, x1: u16, y1: u16) -> Result<(), LcdError> {
+    /// Leave off state
+    pub fn display_on(&mut self) -> Result<(), LcdError> {
+        self.write_command(DISPLAY_ON)
+    }
+
+    /// Enter off state
+    pub fn display_off(&mut self) -> Result<(), LcdError> {
+        self.write_command(DISPLAY_OFF)
+    }
+
+    /// Enter sleep mode
+    pub fn enter_sleep_mode(&mut self) -> Result<(), LcdError> {
+        self.write_command(ENTER_SLEEP_MODE)
+    }
+
+    /// Disable sleep mode
+    pub fn leave_sleep_mode(&mut self) -> Result<(), LcdError> {
+        self.write_command(SLEEP_OUT)
+    }
+
+    pub(crate) fn set_window(
+        &mut self,
+        x0: u16,
+        y0: u16,
+        x1: u16,
+        y1: u16,
+    ) -> Result<(), LcdError> {
         let c1 = x1.saturating_sub(1).max(x0);
         let p1 = y1.saturating_sub(1).max(y0);
         let (c0h, c0l) = u16_to_bytes(x0);
@@ -260,12 +288,16 @@ where
         self.write_command(MEMORY_WRITE)?;
         Ok(())
     }
+
+    /// Clear the entire screen with the given color
     pub fn clear(&mut self, color: u16) -> Result<(), LcdError> {
         let (w, h) = self.size();
         self.fill_rect(0, 0, w, h, color)?;
 
         Ok(())
     }
+
+    /// Draw filled rect or line (when width or height set to 1)
     pub fn fill_rect(
         &mut self,
         x: u16,
@@ -286,6 +318,11 @@ where
         }
         Ok(())
     }
+
+    /// Draw raw sprite data on the screen.
+    ///
+    /// The input buffer should contain color information in high_byte_u8, low_byte_u8 format.
+    /// Buffer length should match the rect specified by (x, y, w, h), although it's not checked.
     pub fn draw_sprite(
         &mut self,
         x: u16,

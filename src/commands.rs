@@ -1,5 +1,7 @@
+pub const ENTER_SLEEP_MODE: u8 = 0x10;
 pub const SLEEP_OUT: u8 = 0x11;
 pub const GAMMA_SET: u8 = 0x26;
+pub const DISPLAY_OFF: u8 = 0x28;
 pub const DISPLAY_ON: u8 = 0x29;
 pub const COLUMN_ADDRESS_SET: u8 = 0x2A;
 pub const PAGE_ADDRESS_SET: u8 = 0x2B;

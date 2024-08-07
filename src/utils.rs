@@ -9,3 +9,8 @@ pub fn rgb_to_u16(r: u8, g: u8, b: u8) -> u16 {
     let bb = b >> 3;
     (rb as u16) << 11 | (gb as u16) << 5 | bb as u16
 }
+
+/// Combine RGB channels into 565 RGB as (u8, u8) tuple
+pub fn rgb_to_u8(r: u8, g: u8, b: u8) -> (u8, u8) {
+    u16_to_bytes(rgb_to_u16(r, g, b))
+}
