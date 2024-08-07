@@ -1,9 +1,9 @@
 [package]
-name = "lcd-2inch4"
+name = "lcd-ili9341-spi"
 version = "0.0.0"
 edition = "2021"
 publish = false
 
 [dependencies]
-embedded-hal = { workspace = true }
+embedded-hal = "1.0"
 

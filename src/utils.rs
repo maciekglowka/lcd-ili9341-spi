@@ -1,5 +1,4 @@
-
-pub(crate) fn u16_to_bytes(val :u16) -> (u8, u8) {
+pub(crate) fn u16_to_bytes(val: u16) -> (u8, u8) {
     ((val >> 8) as u8, (val & 0xff) as u8)
 }
 
