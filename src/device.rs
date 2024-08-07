@@ -16,6 +16,8 @@ pub enum LcdError {
     SpiError,
 }
 
+/// Display rotation, where Rotate0 is the default vertical orientation.
+/// Enum variants represent clock-wise rotation angles.
 pub enum LcdOrientation {
     Rotate0,
     Rotate90,
@@ -23,6 +25,13 @@ pub enum LcdOrientation {
     Rotate270,
 }
 
+/// Main LCD struct
+///
+/// Required hardware connections:
+/// - spi: the Spi interface
+/// - dc_pin: Data / Command selector
+/// - rst_pin: Device reset pin
+/// - bl_pin: backlight level pin (PWM)
 pub struct Lcd<T, U, V, W> {
     spi: T,
     dc_pin: U,  // Data / Command - 0=WriteCommand, 1=WriteData
@@ -47,6 +56,20 @@ where
             orientation: LcdOrientation::Rotate0,
         }
     }
+    /// Sets display's rotation
+    ///
+    /// Should be called before LCD initialization:
+    /// ```
+    /// let mut lcd = Lcd::new(
+    ///     spi,
+    ///     dc_pin,
+    ///     rst_pin,
+    ///     bl_pin
+    ///    );
+    ///    .with_orientation(lcd_2inch4::LcdOrientation::Rotate90);
+    /// let _ = lcd.init(&mut delay);
+    /// ```
+
     pub fn with_orientation(mut self, orientation: LcdOrientation) -> Self {
         self.orientation = orientation;
         self

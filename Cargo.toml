@@ -1,8 +1,15 @@
 [package]
 name = "lcd-ili9341-spi"
-version = "0.0.0"
+description = "Embedded_hal driver for ILI9341 SPI LCD, compatible with Waveshare 2,4 inch board"
+license = "MIT"
+repository = "https://github.com/maciekglowka/lcd-ili9341-spi"
+version = "0.1.0"
 edition = "2021"
+readme = "README.md"
 publish = false
+
+[lib]
+doctest = false
 
 [dependencies]
 embedded-hal = "1.0"
