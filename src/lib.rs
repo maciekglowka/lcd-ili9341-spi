@@ -1,4 +1,5 @@
 #![no_std]
+#![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
 mod commands;
 mod device;
 #[cfg(feature = "text")]
