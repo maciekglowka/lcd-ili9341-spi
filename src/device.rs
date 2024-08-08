@@ -322,7 +322,8 @@ where
     /// Draw raw sprite data on the screen.
     ///
     /// The input buffer should contain color information in high_byte_u8, low_byte_u8 format.
-    /// Buffer length should match the rect specified by (x, y, w, h), although it's not checked.
+    /// Buffer length should match the rect specified by the (x, y, w, h) although it's currently
+    /// not checked.
     pub fn draw_sprite(
         &mut self,
         x: u16,

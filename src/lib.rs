@@ -5,5 +5,5 @@ mod device;
 mod text;
 mod utils;
 
-pub use device::{Lcd, LcdOrientation};
+pub use device::{Lcd, LcdError, LcdOrientation};
 pub use utils::{rgb_to_u16, rgb_to_u8};

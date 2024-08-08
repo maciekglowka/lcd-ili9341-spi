@@ -1,18 +1,34 @@
 # ILI9341 LCD Spi driver
 
-LCD driver for Waveshare 2,4" board, based on ILI9341.
+Device agnostic LCD driver for Waveshare 2,4" board, based on ILI9341.
 
 `no_std` and
 `embedded_hal=1.0` compatibile.
 
-Currently supported functionalities:
+### Currently supports:
 
 - Rect / line drawing
-- Sprite rendering
-- Basic text rendering (via `text` feature)
-- Backlight setting (via a PWM pin)
+- Sprite buffer rendering
+- Basic text rendering (via a `text` feature)
+- Backlight level setting (via a PWM pin)
 
-## Arduino Example
+
+#### Text rendering 
+
+As the text rendering requires an embedded font, it has been hidden behind a feature flag
+in order to save memory when not needed. The font supports basic ASCII range: codes 32 - 128 (each character takes 8 bytes).
+
+
+### Required hardware connections:
+
+- SPI: impl `SpiBus` (from the embedded_hal)
+- DC pin: Data / Command selector - Digital Pin
+- RST pin: Device reset - Digital Pin
+- BL pin: backlight level - PWM pin
+
+
+
+## Arduino Uno Example
 
 ```rust
 #![no_std]
@@ -71,7 +87,7 @@ fn main() -> ! {
 
     // Make the screen black
     let _ = lcd.clear(0x0000);
-    // Draw magenta colored rect
+    // Draw magenta rect
     lcd.fill_rect(10, 10, 20, 30, rgb_to_u16(255, 0, 255));
     // Draw blue-ish horizontal line
     lcd.fill_rect(0, 50, 320, 1, rgb_to_u16(0, 128, 255));

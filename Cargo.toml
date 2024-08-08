@@ -8,6 +8,8 @@ version = "0.1.0"
 edition = "2021"
 readme = "README.md"
 publish = true
+keywords = ["embedded", "driver", "display", "waveshare"]
+categories = ["embedded", "hardware-support", "no-std::no-alloc"]
 
 [lib]
 doctest = false
