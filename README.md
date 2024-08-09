@@ -1,5 +1,8 @@
 # ILI9341 LCD Spi driver
 
+[![crates.io](https://img.shields.io/crates/v/lcd-ili9341-spi)](https://crates.io/crates/lcd-ili9341-spi)
+[![Documentation](https://img.shields.io/docsrs/lcd-ili9341-spi)](https://docs.rs/lcd-ili9341-spi) 
+
 Device agnostic LCD driver for Waveshare 2,4" board, based on ILI9341.
 
 `no_std` and
@@ -108,4 +111,66 @@ fn main() -> ! {
     }
 }
 
+```
+
+## Raspberry Pi Example
+
+```rust
+use lcd_ili9341_spi::{rgb_to_u16, rgb_to_u8, Lcd, LcdOrientation};
+use rppal::gpio::Gpio;
+use rppal::hal::Delay;
+use rppal::pwm::{Channel, Polarity, Pwm};
+use rppal::spi::{Bus, Mode, Segment, SlaveSelect, Spi};
+
+fn main() {
+    let dc_pin = Gpio::new().unwrap().get(25).unwrap().into_output();
+    let rst_pin = Gpio::new().unwrap().get(27).unwrap().into_output();
+    let bl_pin = PwmHal(Pwm::with_frequency(Channel::Pwm0, 512.0, 0.5, Polarity::Normal, true).unwrap()); 
+
+    let mut pi_spi = Spi::new(
+        Bus::Spi0,
+        SlaveSelect::Ss0,
+        8_000_000,
+        rppal::spi::Mode::Mode0,
+    )
+    .unwrap();
+
+    let mut lcd = Lcd::new(pi_spi, dc_pin, rst_pin, bl_pin);
+    let mut delay = Delay::new();
+    let _ = lcd.init(&mut delay);
+
+    let _ = lcd.set_backlight(140);
+
+    // Make the screen black
+    let _ = lcd.clear(0x0000);
+    // Draw magenta colored rect
+    lcd.fill_rect(10, 10, 20, 30, rgb_to_u16(255, 0, 255));
+    // Render text
+    lcd.draw_text(10, 120, "RustberryPi", rgb_to_u16(0, 128, 255), 0x0000, 2);
+
+    std::thread::sleep(std::time::Duration::from_secs(15));
+}
+
+// SetDutyCycle impl is missing in the rppal crate?
+struct PwmHal(Pwm);
+impl embedded_hal::pwm::SetDutyCycle for PwmHal {
+    fn max_duty_cycle(&self) -> u16 {
+        255
+    }
+    fn set_duty_cycle(&mut self, duty: u16) -> Result<(), Self::Error> {
+        self.0.set_duty_cycle(duty as f64 / 255.0);
+        Ok(())
+    }
+}
+impl embedded_hal::pwm::ErrorType for PwmHal {
+    type Error = PwmError;
+}
+
+#[derive(Debug)]
+struct PwmError;
+impl embedded_hal::pwm::Error for PwmError {
+    fn kind(&self) -> embedded_hal::pwm::ErrorKind {
+        embedded_hal::pwm::ErrorKind::Other
+    }
+}
 ```
