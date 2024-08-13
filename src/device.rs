@@ -6,7 +6,7 @@ use hal::pwm::SetDutyCycle;
 use hal::spi::SpiBus;
 
 use crate::commands::*;
-use crate::utils::u16_to_bytes;
+use crate::utils::{color_buffer, u16_to_bytes};
 
 const COLUMNS: u16 = 240;
 const PAGES: u16 = 320;
@@ -307,13 +307,12 @@ where
         color: u16,
     ) -> Result<(), LcdError> {
         self.set_window(x, y, x + w, y + h)?;
-        let (ch, cl) = u16_to_bytes(color);
         self.enable_write_data()?;
 
         // spi send optimization
         // slight buffer overflow seems ok
-        let chunk = [ch, cl, ch, cl, ch, cl, ch, cl];
-        for _ in 0..(w as u32 * h as u32).div_ceil(4) {
+        let chunk = color_buffer::<32>(color);
+        for _ in 0..(w as u32 * h as u32).div_ceil(16) {
             self.write_data_continue(&chunk)?;
         }
         Ok(())
