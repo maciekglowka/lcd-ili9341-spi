@@ -40,6 +40,7 @@ pub struct Lcd<T, U, V, W> {
     rst_pin: V, // Reset
     bl_pin: W,  // Backlight PWM
     orientation: LcdOrientation,
+    max_buffer_size: usize,
 }
 
 impl<T, U, V, W> Lcd<T, U, V, W>
@@ -56,6 +57,7 @@ where
             rst_pin,
             bl_pin,
             orientation: LcdOrientation::Rotate0,
+            max_buffer_size: 32,
         }
     }
     /// Sets display's rotation
@@ -74,6 +76,12 @@ where
 
     pub fn with_orientation(mut self, orientation: LcdOrientation) -> Self {
         self.orientation = orientation;
+        self
+    }
+
+    /// Max SPI chunk size. In bytes
+    pub fn with_max_buffer_size(mut self, size: usize) -> Self {
+        self.max_buffer_size = size;
         self
     }
 
@@ -130,8 +138,13 @@ where
     /// Sets the data pin and sends the payload
     #[inline(always)]
     pub(crate) fn write_data(&mut self, data: &[u8]) -> Result<(), LcdError> {
+        let mut offset = 0;
         self.enable_write_data()?;
-        self.write_data_continue(data)?;
+        while offset < data.len() {
+            let end = data.len().min(offset + self.max_buffer_size);
+            self.write_data_continue(&data[offset..end])?;
+            offset += self.max_buffer_size;
+        }
         Ok(())
     }
 
