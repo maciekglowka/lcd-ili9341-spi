@@ -11,6 +11,7 @@ use crate::utils::{color_buffer, u16_to_bytes};
 const COLUMNS: u16 = 240;
 const PAGES: u16 = 320;
 
+#[derive(Debug)]
 pub enum LcdError {
     PinError,
     SpiError,
@@ -18,6 +19,7 @@ pub enum LcdError {
 
 /// Display rotation, where Rotate0 is the default vertical orientation.
 /// Enum variants represent clock-wise rotation angles.
+#[derive(Debug)]
 pub enum LcdOrientation {
     Rotate0,
     Rotate90,
